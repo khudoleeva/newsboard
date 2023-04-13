@@ -1,0 +1,49 @@
+{% extends 'default.html' %}
+{% block title %}
+Новость<br>
+{{ new.name }}
+{% endblock title %}
+{% block content %}
+{{ new.date }}<br>
+{{new.text}}
+<hr>
+{% if user.id == new.author.id %}
+<div class="blog-pagination2" aria-label="Pagination">
+        <a class="btn btn-outline-primary" href="/board/{{new.id}}/delete">Удалить статью</a>
+        <a class="btn btn-outline-primary" href="/board/{{new.id}}/update" >Редактировать</a>
+        <a class="btn btn-outline-primary" href="/board/create">Создать новую</a>
+<!--        <a class="btn btn-outline-secondary disabled" href="#" tabindex="-1" >Редактировать</a>-->
+</div>
+{% elif user.id %}
+<h5><strong>{{ user.username }}</strong>, вы можете написать комментарий к данной статье!</h5>
+
+<form method='post' action="/board/comment">
+        {% csrf_token %}
+        <div class="form-group">
+             <label for="form_message">*</label>
+             <textarea id="form_message" name="message" class="form-control" placeholder="Написать комментарий..." rows="4" required="required" data-error="Please,leave us a message."></textarea>
+             <div class="help-block with-errors"></div>
+        </div>
+        <input type="hidden" value="{{new.id}}" name='new_id'>
+        <input type="hidden" value="{{user.id}}" name='u_name'>
+        <div class="col-4 pt-3 blog-pagination2" aria-label="Pagination" >
+                <input type="submit" class="btn btn-outline-primary" value="Отправить комментарий">
+        </div>
+</form>
+
+
+{% endif %}
+<hr>
+      <div class="position-sticky" style="top: 2rem;">
+        <div class="p-4 mb-3 bg-light rounded">
+          <h4 class="fst-italic mb-3" >Комментарии:</h4>
+            {% for n in new.comment_set.all %}
+                {% if n.switch %}
+                <p class="mb-2">- {{n.text_comment}} <i><ins>Автор: {{n.one_to_many_user.username}}</ins></i></p>
+            {% endif %}
+            {% endfor %}
+        </div>
+      </div>
+
+{% endblock content %}
+

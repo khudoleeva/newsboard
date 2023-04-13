@@ -1,0 +1,47 @@
+{% extends 'default.html' %}
+{% block title2 %}
+<div class="p-4 p-md-5 mb-4 text-white rounded bg-dark">
+    <div class="col-md-6 px-0">
+      <h1 class="display-4 fst-italic">Новости о самой крутой игре в мире!</h1>
+      <p class="lead my-3">Это культовая игра, покорившая миллионы игроков по всему миру.</p>
+    </div>
+</div>
+{% endblock title2 %}
+{% block title %}
+Список объявлений
+{% endblock title %}
+{% block content %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Дата</th>
+            <th>Текст</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for new in news %}
+     <tr>
+         <td>
+             {{new.name}}
+         </td>
+         <td>
+             {{ new.date|date:"d.m.Y"}}
+         </td>
+         <td>
+             {{ new.text|truncatechars:30}}
+         </td>
+          <td>
+             <a href="./{{new.id}}">Подробнее</a>
+         </td>
+     </tr>
+    {% endfor %}
+</table>
+{% if user.username %}
+<div class="blog-pagination2" aria-label="Pagination">
+        <a class="btn btn-outline-primary" href="/board/create">Создать новую статью</a>
+</div>
+{% endif %}
+
+{% endblock content %}

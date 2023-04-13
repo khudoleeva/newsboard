@@ -1,0 +1,65 @@
+{% extends 'default.html' %}
+{% block content %}
+<h2>Страница авторизованного пользователя <br>{{request.user.username}}</h2>
+<div> Адрес вашей электронной почты <b>{{ request.user.email }}</b></div>
+<hr>
+<div class="blog-pagination2" aria-label="Pagination">
+        <a class="btn btn-outline-primary" href="/accounts/logout/">Выйти</a>
+        <a class="btn btn-outline-primary" href="/board/create">Создать статью</a>
+</div>
+<hr>
+<h4>Список комментариев к вашим статьям</h4>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Комментарий</th>
+                <th>Статья</th>
+                <th>Дата</th>
+                <th>Автор</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for news in my_news %}
+            {% for com in news.comment_set.all %}
+                 <tr>
+                     <td>
+                         {{ com.text_comment }}
+                     </td>
+                     <td>
+                         {{ com.one_to_many_new.name}}  {{ com.one_to_many_new.text |truncatechars:30 }}
+                     </td>
+                     <td>
+                         {{ com.date_comment|date:"d.m.Y"}}
+                     </td>
+                      <td>
+                         {{ com.one_to_many_user.username}}
+                     </td>
+                     {% if not com.switch %}
+                         <form method='post' action="/board/send_com">
+                            {% csrf_token %}
+                         <td>
+                             <input type="hidden" value="{{com.id}}" name='send_com'>
+                             <input class="btn btn-outline-secondary" type="submit" value="Принять" name='send'>
+                         </td>
+                         </form>
+                     {% else %}
+                        <td>
+                             <p><strong>Принят</strong></p>
+                        </td>
+                     {% endif %}
+                     <form method='post' action="/board/del_com">
+                        {% csrf_token %}
+                     <td>
+                         <input type="hidden" value="{{com.id}}" name='del_com'>
+                         <input class="btn btn-outline-secondary" type="submit" value="Удалить" name='del'>
+                     </td>
+                     </form>
+                 </tr>
+            {% endfor %}
+        {% endfor %}
+    </table>
+
+{% endblock %}
